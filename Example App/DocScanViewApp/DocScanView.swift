@@ -10,14 +10,14 @@ import VisionKit
 
 struct DocScanView: UIViewControllerRepresentable {
     
-    let completion: ((VNDocumentCameraScan) -> ())?
+    @Binding var results: [Image]
     let cancelled: (() -> ())?
     let failed: ((Error) -> ())?
     
-    init(completion: ((VNDocumentCameraScan) -> ())?, cancelled: (()->())?, failedWith failed: ((Error) -> ())?) {
-        self.completion = completion
+    init(results: Binding<[Image]>, cancelled: (()->())?, failedWith failed: ((Error) -> ())?) {
         self.cancelled = cancelled
         self.failed = failed
+        self._results = results
     }
     
     //Handles updates from the Delegate to SwiftUI
@@ -28,7 +28,11 @@ struct DocScanView: UIViewControllerRepresentable {
         }
         
         func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFinishWith scan: VNDocumentCameraScan) {
-            visionView.completion?(scan)
+            for pageIndex in 0..<scan.pageCount {
+                let image = scan.imageOfPage(at: pageIndex)
+                visionView.results.append(Image(uiImage: image))
+            }
+            controller.dismiss(animated: true)
         }
         
         func documentCameraViewControllerDidCancel(_ controller: VNDocumentCameraViewController) {
