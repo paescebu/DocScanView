@@ -9,7 +9,7 @@ import VisionKit
 
 struct ContentView: View {
     @State var debugInfo: String = ""
-    @State var images: [Image] = []
+    @State var images: [UIImage] = []
     @State var showsImage: Bool = false
     @State var currentImageId: Int = 0
     @State var showsScanner: Bool = false
@@ -63,13 +63,13 @@ struct DebugView: View {
 
 struct FullScreenImage: View {
     @Binding var showsImage: Bool
-    @Binding var images: [Image]
+    @Binding var images: [UIImage]
     @Binding var currentImageId: Int
     let namespace: Namespace.ID
     var body: some View {
         Group {
             if images.count > 0 {
-                images[currentImageId]
+                Image(uiImage: images[currentImageId])
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .onTapGesture(count: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/, perform: {
@@ -83,7 +83,7 @@ struct FullScreenImage: View {
 
 struct ResultImagesGrid: View {
     @Binding var showsImage: Bool
-    @Binding var images: [Image]
+    @Binding var images: [UIImage]
     @Binding var currentImageId: Int
     var rows: [GridItem] = [ GridItem(.fixed(100), spacing: 15, alignment: .center) ]
     let namespace: Namespace.ID
@@ -91,13 +91,14 @@ struct ResultImagesGrid: View {
         ScrollView(.horizontal) {
             LazyHGrid(rows: rows, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/, spacing: /*@START_MENU_TOKEN@*/nil/*@END_MENU_TOKEN@*/, pinnedViews: /*@START_MENU_TOKEN@*/[]/*@END_MENU_TOKEN@*/) {
                 ForEach(0..<images.count, id: \.self) { index in
-                    images[index]
+                    Image(uiImage: images[index])
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .onTapGesture(count: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/, perform: {
                             currentImageId = index
                             showsImage.toggle()
                         })
+                        .cornerRadius(5.0)
                         .matchedGeometryEffect(id: "image\(index)", in: namespace)
                 }
             }
