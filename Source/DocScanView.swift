@@ -10,11 +10,11 @@ import VisionKit
 
 struct DocScanView: UIViewControllerRepresentable {
     
-    @Binding var results: [Image]
+    @Binding var results: [UIImage]
     let cancelled: (() -> ())?
     let failed: ((Error) -> ())?
     
-    init(results: Binding<[Image]>, cancelled: (()->())?, failedWith failed: ((Error) -> ())?) {
+    init(results: Binding<[UIImage]>, cancelled: (()->())?, failedWith failed: ((Error) -> ())?) {
         self.cancelled = cancelled
         self.failed = failed
         self._results = results
@@ -30,7 +30,7 @@ struct DocScanView: UIViewControllerRepresentable {
         func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFinishWith scan: VNDocumentCameraScan) {
             for pageIndex in 0..<scan.pageCount {
                 let image = scan.imageOfPage(at: pageIndex)
-                visionView.results.append(Image(uiImage: image))
+                visionView.results.append(image)
             }
             controller.dismiss(animated: true)
         }
